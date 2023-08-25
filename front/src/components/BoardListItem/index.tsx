@@ -19,7 +19,7 @@ export default function BoardListItem({ boardItem }: Props) {
   //          event handler: Card Click 이벤트 처리 함수          //
   const onCardClickHandler = () => {
     // TODO: 카드 클릭 이벤트 처리 - 해당 게시물 번호 상세 페이지로 이동
-    alert('보드넘버' + boardNumber);
+    alert('boardNumber : ' + boardNumber);
   }
 
   //          render: 게시물 리스트 아이템 컴포넌트 렌더링          //

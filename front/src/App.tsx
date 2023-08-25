@@ -1,12 +1,10 @@
-import React, { useState } from "react";
 import "./App.css";
-import BoardListItem from "components/BoardListItem";
-import { currentBoardListMock } from "mocks";
+import Footer from "layouts/Footer";
 
 function App() {
   return (
     <>
-      {currentBoardListMock.map((item) => (<BoardListItem boardItem={item} />))}
+      <Footer />
     </>
   );
 }
