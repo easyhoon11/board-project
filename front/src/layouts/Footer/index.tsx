@@ -6,11 +6,11 @@ export default function Footer() {
 
 	//          event handler: 인스타 아이콘 버튼 클릭 이벤트 처리         //
 	const onInstaIconClickHandler = () => {
-		window.location.href = 'https://www.instagram.com';
+		window.open('https://www.instagram.com/easyhoon_92/');
 	}
 	//          event handler: 네이버 블로그 아이콘 버튼 클릭 이벤트 처리         //
 	const onNaverBlogIconClickHandler = () => {
-		window.open('https://blog.naver.com');
+		window.location.href = ('https://blog.naver.com');
 	}
 
 	//          render: 푸터 컴포넌트 렌더링         //
