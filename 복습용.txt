@@ -1,0 +1,18 @@
+npx create-react-app 프로젝트명 --template typescript
+
+폴더정리 (App.tsx, App.css, index.tsx, index.css, react-app-env.d.ts)
+
+function App() {return(<></>)}, 주석 아래 내용 삭제
+
+폴더 생성(views, layouts, components, constant, stores, type, mocks, assets, hooks, utils, apis)
+
+만들 페이지 보면서 path, component 정리
+
+view 모듈(폴더 -> index.tsx, style.css, assets)들 작성
+
+layout 모듈(폴더 -> index.tsx, style.css, assets)들 작성
+
+component 모듈(폴더 -> index.tsx, style.css, assets)들 작성
+
+component 작성(구조-> 스타일 -> 이벤트) -> layout 작성(구조-> 스타일 -> 이벤트) 
+-> path 기준으로 routes 작성 -> view작성(구조-> 스타일 -> 이벤트) -> api 연결
