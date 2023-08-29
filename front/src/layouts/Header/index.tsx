@@ -1,15 +1,18 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useState, useEffect, KeyboardEvent } from "react";
 import "./style.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MAIN_PATH, AUTH_PATH, SEARCH_PATH, USER_PATH } from "constant";
 import { BOARD_WRITE_PATH, BOARD_DETAIL_PATH, BOARD_UPDATE_PATH } from "constant";
 import { useCookies } from "react-cookie";
+import { useUserStore } from "stores";
+import { LoginUser } from "types";
 
 //					component: 헤더 컴포넌트					//
 export default function Header() {
   //					state: path name 상태					//
   const { pathname } = useLocation();
-
+  //					state: 로그인 유저 상태					//
+  const { user, setUser } = useUserStore();
   //					state: cookie 상태					//
   const [cookies, setCookis] = useCookies();
 
@@ -32,7 +35,7 @@ export default function Header() {
   const navigator = useNavigate();
   //					event handler: 로고 클릭 이벤트 처리					//
   const onLogoClickHandler = () => {
-    navigator("/");
+    navigator(MAIN_PATH);
   };
 
   //					component: 검색 컴포넌트					//
@@ -49,11 +52,25 @@ export default function Header() {
       const searchValue = event.target.value;
       setSearchValue(searchValue);
     };
+    //					event handler: 검색 인풋 Enter key down 이벤트 처리					//
+    const onSearchEnterKeyDownHandler = (event: KeyboardEvent <HTMLInputElement> ) => {
+      if (event.key !== 'Enter') return;
+      if (!searchValue) return;
+      navigator(SEARCH_PATH(searchValue));
+    }
     //					event handler: 검색 버튼 클릭 이벤트 처리					//
     const onSearchButtonClickHandler = () => {
-      setShowInput(!showInput);
+      if (!showInput) {
+        setShowInput(true);
+        return;
+      }
+      if(!searchValue){
+        setShowInput(false);
+        return
+      }
+      navigator(SEARCH_PATH(searchValue));
     };
-    //					render: 검색 컴포넌트 렌더링					//
+    //					render: 검색 컴포넌트 렌더링 (인풋이 보임 상태일 때)	  			//
     if (showInput)
       return (
         <div className="header-search-input-box">
@@ -63,12 +80,14 @@ export default function Header() {
             value={searchValue}
             onChange={onSearchValueChangeHandler}
             placeholder="검색어를 입력해주세요."
+            onKeyDown={onSearchEnterKeyDownHandler}
           />
           <div className="icon-button" onClick={onSearchButtonClickHandler}>
             <div className="search-icon"></div>
           </div>
         </div>
       );
+    //					render: 검색 컴포넌트 렌더링 (인풋이 보임 상태가 아닐 때)					//
     return (
       <div className="icon-button" onClick={onSearchButtonClickHandler}>
         <div className="search-icon"></div>
@@ -77,19 +96,34 @@ export default function Header() {
   };
   //					component: 로그인 상태에 따라 로그인 혹은 마이페이지 버튼 컴포넌트					//
   const LoginMyPageButton = () => {
+
+    //					event handler: 마이페이지 버튼 클릭 이벤트 처리					//
+    const onMyPageButtonClickHandler = () => {
+      if(!user) return;
+      navigator(USER_PATH(user.email));
+    }
+
+    //					event handler: 로그인 버튼 클릭 이벤트 처리					//
+    const onLoginButtonClickHandler = () => {
+      navigator(AUTH_PATH);
+    }
+
+    //					render: 마이페이지 버튼 컴포넌트 렌더링 (로그인 상태일 때)					//
     if(cookies.email)
     return(
-      <div className="mypage-button">마이페이지</div>
+      <div className="mypage-button" onClick={onMyPageButtonClickHandler}>마이페이지</div>
     )
-
+    //					render: 로그인 버튼 컴포넌트 렌더링	(로그인 상태가 아닐 때)				//  
     return(
-      <div className="login-button">로그인</div>
+      <div className="login-button" onClick={onLoginButtonClickHandler}>로그인</div>
     )
   }
 
   //					effect: 마운트시에만 실행될 함수					//
   useEffect(() => {
     setCookis('email', 'email@email.com', { path: '/'});
+    const user: LoginUser = {email: 'email@email.com', nickname: '주코야키', profileImage: null};
+    setUser(user);
   }, []);
 
   //					render: 헤더 컴포넌트 렌더링					//
@@ -107,7 +141,7 @@ export default function Header() {
           {isMainPage && <><Search /><LoginMyPageButton/></>}
           {isSearchPage && <><Search /><LoginMyPageButton/></>}
           {isBoardDetailPage && <><Search /><LoginMyPageButton/></>}
-          {isUserPage && <></>}
+          {isUserPage && <><Search /></>}
           {isBoartWritePage && <></>}
           {isBoardUpdatePage && <></>}
         </div>
