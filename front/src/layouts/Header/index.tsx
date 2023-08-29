@@ -2,11 +2,7 @@ import React, { ChangeEvent, useState, useEffect } from "react";
 import "./style.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MAIN_PATH, AUTH_PATH, SEARCH_PATH, USER_PATH } from "constant";
-import {
-  BOARD_WRITE_PATH,
-  BOARD_DETAIL_PATH,
-  BOARD_UPDATE_PATH,
-} from "constant";
+import { BOARD_WRITE_PATH, BOARD_DETAIL_PATH, BOARD_UPDATE_PATH } from "constant";
 import { useCookies } from "react-cookie";
 
 //					component: 헤더 컴포넌트					//
