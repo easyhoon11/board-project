@@ -1,0 +1,40 @@
+.menu {
+    height: 50px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 1);
+}
+
+.menu-tab {
+  margin: 0 40px;
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.menu-tab:hover{
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.2);
+
+    border-radius: 12px;
+}
+
+.dropdown-content{
+    display : none;
+    position : absolute;
+    z-index : 1; /*다른 요소들보다 앞에 배치*/
+    
+    color: rgba(0, 0, 0, 1);
+  }
+  
+  .dropdown-content a{
+    display : block;
+  }
+  
+  .menu-tab:hover .dropdown-content {
+    display: block;
+  }
