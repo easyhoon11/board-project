@@ -2,7 +2,7 @@
   padding: 100px 0 150px;
   min-width: 1440px;
   height: calc(100vh - 64px - 100px - 150px);
-  /* min-height: 960px; */
+  min-height: 960px;
 
   display: flex;
   justify-content: center;
@@ -91,6 +91,14 @@
 
 .auth-card-title {
   color: rgba(0, 0, 0, 1);
+
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 140%;
+}
+
+.auth-card-title-page{
+  color: rgba(0, 0, 0, 0.7);
 
   font-size: 24px;
   font-weight: 600;

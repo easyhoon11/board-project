@@ -1,6 +1,6 @@
 const loginInfoMock = {
-    email: 'aa@aaaaa.aa',
-    password: 'aaaaaa',
+    email: '1111',
+    password: '1111',
 }
 
 export default loginInfoMock;
