@@ -1,40 +1,24 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 .dropdown {
-  height: 50px;
-  position: relative;
-  display: inline-block;
+  width: 50px;
+  padding: 12px 12px;
 
-  background-color: rgba(0, 0, 0, 1);
+  text-align: center;
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+
+  background-color: blueviolet;
 }
 
-
-.dropdown:hover{
-  cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.8);
-  
-  border-radius: 12px;
-}
-
-.dropdown-content a{
-  display : block;
-  text-decoration: none;
-}
-.dropdown-content{
-  display : none;
-  position : absolute;
-  z-index : 1; /*다른 요소들보다 앞에 배치
-  */
-  color: rgba(0, 0, 0, 1);
-}
-
-
-.dropbtn:hover .dropdown-content {
+.dropdown .dropdown-content:hover {
   display: block;
 }
 
-.dropbtn {
-  margin: 0 40px;
-  color: rgba(255, 255, 255, 1);
-
-  font-size: 25px;
-  font-weight: 500;
+.dropdown-content {
+  display: none;
 }
