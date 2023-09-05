@@ -2,6 +2,8 @@ import React from "react";
 import "./style.css";
 import { BoardItem } from "types";
 import DefaultProfileImage from 'assets/default-profile-image.png'
+import { useNavigate } from "react-router-dom";
+import { BOARD_DETAIL_PATH } from "constant";
 
 //          interface: TOP3 리스트 아이템 컴포넌트 Props         //
 interface Props {
@@ -16,10 +18,12 @@ export default function Top3ListItem({ boardItem }: Props) {
   const { title, contents, imageUrl } = boardItem;
   const { viewCount, favoriteCount, commentCount } = boardItem;
 
+  //          function: 네비게이트 함수         //
+  const navigator = useNavigate();
+
   //          event handler: Card Click 이벤트 처리 함수          //
   const onCardClickHandler = () => {
-    // TODO: 카드 클릭 이벤트 처리 - 해당 게시물 번호 상세 페이지로 이동
-    alert('boardNumber : ' + boardNumber);
+    navigator(BOARD_DETAIL_PATH(boardNumber));
   }
 
   //          render: TOP3 리스트 아이템 컴포넌트 렌더링          //

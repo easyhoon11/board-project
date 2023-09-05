@@ -154,7 +154,7 @@ export default function Authentication() {
   //					component: sign up 카드 페이지					//
   const SignUpCard = () => {
     //          state: 페이지 번호 상태          //
-    const [page, setPage] = useState<1 | 2>(1);
+    const [page, setPage] = useState<1 | 2>(2);
 
     //          state: 이메일 상태          //
     const [email, setEmail] = useState<string>("");
@@ -221,7 +221,12 @@ export default function Authentication() {
 
     //          state: 상세 주소 상태          //
     const [addressDetail, setAddressDetail] = useState<string>("");
-    
+
+    //          state: 개인정보동의 상태          //
+    const [consent, setConsent] = useState<boolean>(false);
+    //          state: 개인정보동의 에러 상태          //
+    const [consentError, setConsentError] = useState<boolean>(false);
+
     //          function: 다음 주소 검색 팝업 오픈 함수          //
     const open = useDaumPostcodePopup();
 
@@ -250,14 +255,19 @@ export default function Authentication() {
     };
     //					event handler: 주소 아이콘 클릭 이벤트 처리					//
     const onAddressIconClickHandler = () => {
-      open({onComplete});
-    }
-    
+      open({ onComplete });
+    };
+
     //					event handler: 다음 주소 검색 완료 이벤트 처리					//
     const onComplete = (data: Address) => {
       const address = data.address;
       setAddress(address);
-    }
+    };
+
+    //					event handler: 개인정보동의 체크 이벤트 처리					//
+    const onConsentCheckHandler = () => {
+      setConsent(!consent);
+    };
 
     //					event handler: 로그인 링크 클릭 이벤트 처리					//
     const onSignInLinkClickHandler = () => {
@@ -300,45 +310,46 @@ export default function Authentication() {
 
     //					event handler: 회원가입 버튼 클릭 이벤트 처리					//
     const onSignUpButtonClickHandler = () => {
-     
       setNicknameError(false);
-      setNicknameErrorMessage('');
+      setNicknameErrorMessage("");
       setTelNumberError(false);
-      setTelNumberErrorMessage('');
+      setTelNumberErrorMessage("");
       setAddressError(false);
-      setAddressErrorMessage('');
+      setAddressErrorMessage("");
+      setConsentError(false);
 
-    
       // description: 닉네임 입력 여부 확인 //
-      const checkedNickname = nickname.trim().length === 0
-      if(checkedNickname){
-      setNicknameError(true);
-      setNicknameErrorMessage('닉네임을 입력해주세요.');
+      const checkedNickname = nickname.trim().length === 0;
+      if (checkedNickname) {
+        setNicknameError(true);
+        setNicknameErrorMessage("닉네임을 입력해주세요.");
       }
 
       // description: 전화번호 입력 여부 확인 //
-      const telNumberPattern = /^[0-9]{10,12}$/
+      const telNumberPattern = /^[0-9]{10,12}$/;
       const checkedTelNumber = !telNumberPattern.test(telNumber);
-      if(checkedTelNumber) {
+      if (checkedTelNumber) {
         setTelNumberError(true);
-        setTelNumberErrorMessage('숫자만 입력해주세요.')
+        setTelNumberErrorMessage("숫자만 입력해주세요.");
       }
 
       // description: 주소 입력 여부 확인 //
       const checkedAddress = address.trim().length === 0;
-      if (checkedAddress){
+      if (checkedAddress) {
         setAddressError(true);
-        setAddressErrorMessage('우편번호를 선택해주세요.')
+        setAddressErrorMessage("우편번호를 선택해주세요.");
       }
 
-      if (checkedNickname || checkedTelNumber || checkedAddress) return;
+      // description: 개인정보동의 체크 여부 확인 //
+      if (!consent) setConsentError(true);
+
+      if (checkedNickname || checkedTelNumber || checkedAddress || !consent)
+        return;
 
       // TODO: 회원가입 처리 및 응답 처리
 
-      setView('sign-in');
-    }
-
-
+      setView("sign-in");
+    };
 
     //          render: sign up 카드 컴포넌트 렌더링          //
     return (
@@ -433,7 +444,20 @@ export default function Authentication() {
           )}
           {page === 2 && (
             <>
-              <div className="auth-button" onClick={onSignUpButtonClickHandler}>{"회원가입"}</div>
+              <div className="auth-consent-box">
+                <div className="auth-check-box" onClick={onConsentCheckHandler}>
+                  {consent ? (
+                    <div className="check-round-fill-icon"></div>
+                  ) : (
+                    <div className="check-ring-light-icon"></div>
+                  )}
+                </div>
+                <div className={consentError? 'auth-consent-title-error' : 'auth-consent-title'}>{"개인정보동의"}</div>
+                <div className="auth-consent-link">{"더보기>"}</div>
+              </div>
+              <div className="auth-button" onClick={onSignUpButtonClickHandler}>
+                {"회원가입"}
+              </div>
             </>
           )}
           <div className="auth-description-box">
