@@ -3614,7 +3614,8 @@ const currentBoardListMock: BoardItem[] = [
         writeDatetime: '2023. 08. 24.',
         nickname: 'easyhoon',
         profileImageUrl: null,
-    }, {
+    }, 
+    {
         boardNumber: 1,
         title: '안녕하세요',
         contents: '안녕하세요. 반갑습니다. ',
