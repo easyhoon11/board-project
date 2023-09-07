@@ -13,7 +13,7 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.eye-off-icon{
+.eye-off-icon {
   width: 21px;
   height: 21px;
 
@@ -22,7 +22,7 @@
   background-size: 100% 100%;
 }
 
-.eye-on-icon{
+.eye-on-icon {
   width: 21px;
   height: 21px;
 
@@ -31,7 +31,7 @@
   background-size: 100% 100%;
 }
 
-.right-arrow-icon{
+.right-arrow-icon {
   width: 21px;
   height: 21px;
 
@@ -40,7 +40,7 @@
   background-size: 100% 100%;
 }
 
-.check-ring-light-icon{
+.check-ring-light-icon {
   width: 100%;
   height: 100%;
 
@@ -49,7 +49,7 @@
   background-size: 100% 100%;
 }
 
-.check-round-fill-icon{
+.check-round-fill-icon {
   width: 100%;
   height: 100%;
 
@@ -74,4 +74,33 @@
   background-image: url(assets/right-light-icon.png);
   background-position: 50% 50%;
   background-size: 100% 100%;
+}
+
+.more-icon {
+  width: 100%;
+  height: 100%;
+
+  background-image: url(assets/more-icon.png);
+  background-position: 50% 50%;
+  background-size: 100% 100%;
+}
+
+.word-bedge {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 30px;
+
+  padding: 4px 20px;
+
+  display: inline-block;
+}
+
+.word-bedge:hover {
+  cursor: pointer;
+
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.divider {
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
