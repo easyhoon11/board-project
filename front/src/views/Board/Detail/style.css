@@ -83,8 +83,8 @@
   position: absolute;
   top: -96px;
   right: 0px;
-  
-    background-color: rgba(255, 255, 255, 1);
+
+  background-color: rgba(255, 255, 255, 1);
 
   box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
 }
@@ -104,9 +104,9 @@
   line-height: 140%;
 }
 
-.more-update-button:hover{
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.3);
+.more-update-button:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .more-delete-button {
@@ -124,27 +124,211 @@
   line-height: 140%;
 }
 
-.more-delete-button:hover{
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.3);
+.more-delete-button:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
-.board-detail-main-text{
-    color: rgba(0, 0, 0, 0.7);
+.board-detail-main-text {
+  color: rgba(0, 0, 0, 0.7);
 
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 140%;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 140%;
 
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }
 
-.board-detail-main-image{
-    width: 100%;
+.board-detail-main-image {
+  width: 100%;
 }
 
-.board-detail-top-main{
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.board-detail-top-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#board-detail-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.board-detail-bottom-button-box {
+  display: flex;
+  gap: 12px;
+}
+
+.board-detail-bottom-button-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.board-detail-bottom-button-text {
+  color: rgba(0, 0, 0, 0.7);
+
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 140%;
+
+  display: flex;
+  align-items: center;
+}
+
+.board-detail-bottom-favorite-box {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.board-detail-bottom-favorite-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.board-detail-bottom-favorite-title {
+  color: rgba(0, 0, 0, 1);
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 140%;
+}
+
+.board-detail-bottom-favorite-contents {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 20px;
+  column-gap: 30px;
+}
+
+.board-detail-bottom-favorite-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.board-detail-bottom-favorite-profile-image {
+  width: 32px;
+  height: 32px;
+
+  background-position: 50% 50%;
+  background-size: 100% 100%;
+}
+
+.board-detail-bottom-favorite-nickname {
+  color: rgba(0, 0, 0, 0.7);
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 140%;
+}
+.board-detail-bottom-comments-box {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.board-detail-bottom-comments-container {
+  padding: 0 20px;
+}
+
+.board-detail-bottom-comments-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.board-detail-bottom-comments-list-title {
+  color: rgba(0, 0, 0, 1);
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 140%;
+}
+
+.board-detail-bottom-comments-list-contents {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.board-detail-bottom-comments-pagination-box {
+  display: flex;
+  justify-content: center;
+}
+
+.board-detail-bottom-comments-input-box {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.board-detail-bottom-comments-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.board-detail-bottom-comments-input {
+  border: none;
+  outline: none;
+  background: none;
+  resize: none;
+
+  overflow: hidden;
+
+  color: rgba(0, 0, 0, 1);
+
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+.board-detail-bottom-comments-button-box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.board-detail-bottom-comments-button {
+  border-radius: 46px;
+  width: 95px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 1);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+}
+
+.board-detail-bottom-comments-button:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.board-detail-bottom-comments-button-disable {
+  border-radius: 46px;
+  width: 95px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 0.4);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: default;
 }

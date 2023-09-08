@@ -56,7 +56,7 @@ export default function Main() {
       viewPageNumberList,
       totalSection,
       setBoardList,
-    } = usePagination();
+    } = usePagination<BoardItem>(5);
 
     //					effect: 컴포넌트 마운트 시 인기 검색어 리스트 불러오기					//
     useEffect(() => {
