@@ -1,5 +1,5 @@
 const loginInfoMock = {
-    email: 'e@e.com',
+    email: 'email@email.com',
     password: '1111',
 }
 
