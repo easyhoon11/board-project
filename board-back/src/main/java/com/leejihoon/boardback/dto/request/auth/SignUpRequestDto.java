@@ -19,14 +19,13 @@ public class SignUpRequestDto {
     @NotBlank @Email
     private String email;
 
-    @NotBlank @Size(min = 8, max = 20)
+    @NotBlank @Size(min=8, max=20)
     private String password;
 
     @NotBlank
     private String nickname;
 
-    @NotBlank
-    @Pattern(regexp = "^[0-9]{11,13}$")
+    @NotBlank @Pattern(regexp="^[0-9]{11,13}$")
     private String telNumber;
 
     @NotBlank
@@ -34,7 +33,6 @@ public class SignUpRequestDto {
 
     private String addressDetail;
 
-    @NotNull
-    @AssertTrue
-    private Boolean agreedPersonal;
+    @NotNull @AssertTrue
+    private Boolean agreedPersonal; 
 }

@@ -16,3 +16,9 @@ component 모듈(폴더 -> index.tsx, style.css, assets)들 작성
 
 component 작성(구조-> 스타일 -> 이벤트) -> layout 작성(구조-> 스타일 -> 이벤트) 
 -> path 기준으로 routes 작성 -> view작성(구조-> 스타일 -> 이벤트) -> api 연결
+
+
+// Back
+
+security config ->
+[dto, entity] -> repository interface -> service interface -> [controller class, service class]

@@ -5,6 +5,7 @@ import './style.css';
 import { useCookies } from 'react-cookie';
 import { useBoardStore, useUserStore } from 'stores';
 import { LoginUser } from 'types';
+import { fileUploadRequest } from 'apis';
 
 //          component: 헤더 컴포넌트          //
 export default function Header() {
@@ -102,7 +103,7 @@ export default function Header() {
     }
     
     //          render: 마이페이지 버튼 컴포넌트 렌더링 (로그인 상태일 때)         //
-    if (cookies.email)
+    if (cookies.accessToken)
     return (
       <div className='mypage-button' onClick={onMyPageButtonClickHandler}>마이페이지</div>
     );
@@ -120,6 +121,17 @@ export default function Header() {
 
     //          event handler: 업로드 버튼 클릭 이벤트 처리          //
     const onUploadButtonClickHandler = () => {
+
+      const boardImageList: string[] = [];
+
+      images.forEach(async image => {
+        const data = new FormData();
+        data.append('file', image);
+
+        const url = await fileUploadRequest(data);
+        if(url) boardImageList.push(url);
+      });
+
       if (isBoardWritePage) {
         alert('작성');
         resetBoard();
@@ -161,8 +173,8 @@ export default function Header() {
 
   //          effect: 마운트시에만 실행될 함수          //
   useEffect(() => {
-    if(cookies.email){
-      const user: LoginUser = {email: cookies.email, nickname: '주코야키', profileImage: null}
+    if (cookies.email) {
+      const user: LoginUser = { email: cookies.email, nickname: '주코야키', profileImage: null };
       setUser(user);
     }
   }, []);

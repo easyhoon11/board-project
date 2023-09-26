@@ -37,5 +37,5 @@ public class SignUpResponseDto extends ResponseDto {
         ResponseDto result = new ResponseDto(ResponseCode.DUPLICATED_TEL_NUMBER, ResponseMessage.DUPLICATED_TEL_NUMBER);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
-
+    
 }

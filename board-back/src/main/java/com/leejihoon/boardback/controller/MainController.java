@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MainController {
     
     @GetMapping("")
-    public ResponseEntity<String> serverCheck(){
-        return ResponseEntity.status(HttpStatus.OK).body("Server on...");
+    public ResponseEntity<String> serverCheck() {
+        return ResponseEntity.status(HttpStatus.OK).body("Server On...");
     }
+
 }
