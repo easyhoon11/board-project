@@ -6,6 +6,8 @@ import {
   GetSignInUserResponseDto,
   GetUserResponseDto,
 } from "./dto/response/user";
+import { PostBoardRequestDto } from "./dto/request/board";
+import { PostBoardResponseDto } from "./dto/response/board";
 
 // description: Domain URL //
 const DOMAIN = "http://localhost:4000";
@@ -49,6 +51,29 @@ export const signInRequest = async (requestBody: SignInRequestDto) => {
     .catch((error) => {
       const responseBody: ResponseDto = error.response.data;
       return responseBody;
+    });
+  return result;
+};
+
+// description: post board API end point //
+const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+
+// description: post board request //
+export const postBoardRequest = async (
+  requestBody: PostBoardRequestDto,
+  token: string
+) => {
+  const result = await axios
+    .post(POST_BOARD_URL(), requestBody, authorization(token))
+    .then((response) => {
+      const responseBody: PostBoardResponseDto = response.data;
+      const { code } = responseBody;
+      return code;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      const { code } = responseBody;
+      return code;
     });
   return result;
 };
@@ -100,13 +125,14 @@ const multipart = { headers: { "Content-Type": "multipart/form-data" } };
 
 // description: file upload request //
 export const fileUploadRequest = async (data: FormData) => {
-  const result = await axios.post(FILE_UPLOAD_URL(), data, multipart)
-    .then(response => {
-        const responseBody: string = response.data;
-        return responseBody;
+  const result = await axios
+    .post(FILE_UPLOAD_URL(), data, multipart)
+    .then((response) => {
+      const responseBody: string = response.data;
+      return responseBody;
     })
-    .catch(error => {
-        return null;
-    })
-    return result;
+    .catch((error) => {
+      return null;
+    });
+  return result;
 };
