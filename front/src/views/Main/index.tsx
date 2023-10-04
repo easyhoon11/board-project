@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import { BoardItem } from "types";
+import { BoardListItem } from "types";
 import { currentBoardListMock, popularWordListMock, top3ListMock } from "mocks";
 import Top3ListItem from "components/Top3ListItem";
 import { useNavigate } from "react-router-dom";
 import { SEARCH_PATH } from "constant";
-import BoardListItem from "components/BoardListItem";
+import BoardItem from "components/BoardItem";
 import Pagination from "components/Pagination";
 import { usePagination } from "hooks";
+import { getLatestBoardListRequest } from "apis";
+import { GetLatestBoardListResponseDto } from "apis/dto/response/board";
+import ResponseDto from "apis/dto/response";
 
 //					component: 메인 페이지 					//
 export default function Main() {
   //					component: 메인 상단 컴포넌트 					//
   const MainTop = () => {
     //					state: 주간 Top3 게시물 리스트 상태					//
-    const [top3List, setTop3List] = useState<BoardItem[]>([]);
+    const [top3List, setTop3List] = useState<BoardListItem[]>([]);
 
     //					effect: 컴포넌트가 마운트 시 top3 리스트 불러오기					//
     useEffect(() => {
@@ -56,17 +59,27 @@ export default function Main() {
       viewPageNumberList,
       totalSection,
       setBoardList,
-    } = usePagination<BoardItem>(5);
-
-    //					effect: 컴포넌트 마운트 시 인기 검색어 리스트 불러오기					//
-    useEffect(() => {
-      // TODO: API 호출로 변경
-      setPopularWordList(popularWordListMock);
-      setBoardList(currentBoardListMock);
-    }, []);
+    } = usePagination<BoardListItem>(5);
 
     //          function: 네비게이트 함수         //
     const navigator = useNavigate();
+    //          function: get latest board list response 처리 함수         //
+    const getLatestBoardListResponse = (
+      responseBody: GetLatestBoardListResponseDto | ResponseDto
+    ) => {
+      const { code } = responseBody;
+      if (code === "DBE") alert("데이터 베이스 오류 입니다.");
+      if (code !== "SU") return;
+
+      const { latestList } = responseBody as GetLatestBoardListResponseDto;
+      setBoardList(latestList);
+    };
+    //					effect: 컴포넌트 마운트 시 실행할 함수					//
+    useEffect(() => {
+      // TODO: API 호출로 변경
+      setPopularWordList(popularWordListMock);
+      getLatestBoardListRequest().then(getLatestBoardListResponse);
+    }, []);
 
     //          event handler: 인기 검색어 뱃지 클릭 이벤트 처리           //
     const onWordBadgeClickHandler = (word: string) => {
@@ -81,7 +94,7 @@ export default function Main() {
           <div className="main-bottom-contents-box">
             <div className="main-bottom-latest-contents-box">
               {viewBoardList.map((boardItem) => (
-                <BoardListItem boardItem={boardItem} />
+                <BoardItem boardListItem={boardItem} />
               ))}
             </div>
             <div className="main-bottom-popular-word-box">

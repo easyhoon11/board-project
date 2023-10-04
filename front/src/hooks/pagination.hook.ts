@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BoardItem } from "types";
+import { BoardListItem } from "types";
 
 const usePagination = <T>(countPerPage: number) => {
   //					state: 현재 페이지 번호 상태					//

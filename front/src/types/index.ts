@@ -1,8 +1,15 @@
 import User from "./user.interface";
 import Board from "./board.interface";
-import BoardItem from "./board-item.interface";
 import LoginUser from "./login-user.interface";
-import CommentItem from "./comment-item.interface";
-import FavoriteItem from "./favorite-item.interface";
+import BoardListItem from "./board-list-item.interface";
+import CommentListItem from "./comment-list-item.interface";
+import FavoriteListItem from "./favorite-list-item.interface";
 
-export type { User, BoardItem, CommentItem, LoginUser, Board, FavoriteItem };
+export type {
+  User,
+  Board,
+  LoginUser,
+  BoardListItem,
+  CommentListItem,
+  FavoriteListItem,
+};

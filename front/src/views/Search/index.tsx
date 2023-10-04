@@ -3,10 +3,10 @@ import "./style.css";
 import { usePagination } from "hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { relationWordListMock, searchListMock } from "mocks";
-import BoardListItem from "components/BoardListItem";
+import BoardItem from "components/BoardItem";
 import Pagination from "components/Pagination";
 import { SEARCH_PATH } from "constant";
-import { BoardItem } from "types";
+import { BoardListItem } from "types";
 
 //					 component: 검색 페이지 component					//
 export default function Search() {
@@ -22,7 +22,7 @@ export default function Search() {
     viewPageNumberList,
     totalSection,
     setBoardList,
-  } = usePagination<BoardItem>(5);
+  } = usePagination<BoardListItem>(5);
   //					state: 검색결과 개수 상태					//
   const [count, setCount] = useState<number>(0);
   //					state: 연관 검색어 리스트 상태					//
@@ -62,7 +62,7 @@ export default function Search() {
           ) : (
             <div className="search-contents-result-box">
               {viewBoardList.map((boardItem) => (
-                <BoardListItem boardItem={boardItem} />
+                <BoardItem boardListItem={boardItem} />
               ))}
             </div>
           )}

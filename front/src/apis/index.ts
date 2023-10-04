@@ -7,7 +7,11 @@ import {
   GetUserResponseDto,
 } from "./dto/response/user";
 import { PostBoardRequestDto } from "./dto/request/board";
-import { PostBoardResponseDto } from "./dto/response/board";
+import {
+  GetLatestBoardListResponseDto,
+  PostBoardResponseDto,
+  GetBoardResponseDto,
+} from "./dto/response/board";
 
 // description: Domain URL //
 const DOMAIN = "http://localhost:4000";
@@ -54,9 +58,43 @@ export const signInRequest = async (requestBody: SignInRequestDto) => {
     });
   return result;
 };
-
+// description: get board API end point //
+const GET_BOARD_URL = (boardNumber: string | number) =>
+  `${API_DOMAIN}/board/${boardNumber}`;
+// description: get latest board list API end point //
+const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
 // description: post board API end point //
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+
+// description: get board request //
+export const getBoardRequest = async (boardNumber: string | number) => {
+  const result = await axios
+    .get(GET_BOARD_URL(boardNumber))
+    .then((response) => {
+      const responseBody: GetBoardResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    });
+  return result;
+};
+
+// description: get latest board list request //
+export const getLatestBoardListRequest = async () => {
+  const result = await axios
+    .get(GET_LATEST_BOARD_LIST_URL())
+    .then((response) => {
+      const responseBody: GetLatestBoardListResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    });
+  return result;
+};
 
 // description: post board request //
 export const postBoardRequest = async (
