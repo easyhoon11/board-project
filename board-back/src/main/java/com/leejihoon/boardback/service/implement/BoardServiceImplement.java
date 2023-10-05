@@ -9,15 +9,23 @@ import org.springframework.stereotype.Service;
 import com.leejihoon.boardback.dto.request.board.PostBoardRequestDto;
 import com.leejihoon.boardback.dto.response.ResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetBoardResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetCommentListResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetFavoriteListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetLatestBoardListResponseDto;
 import com.leejihoon.boardback.dto.response.board.PostBoardResponseDto;
+import com.leejihoon.boardback.dto.response.board.PutFavoriteResponseDto;
 import com.leejihoon.boardback.entity.BoardEntity;
 import com.leejihoon.boardback.entity.BoardImageEntity;
 import com.leejihoon.boardback.entity.BoardViewEntity;
+import com.leejihoon.boardback.entity.FavoriteEntity;
+import com.leejihoon.boardback.entity.UserEntity;
 import com.leejihoon.boardback.repository.BoardImageRepository;
 import com.leejihoon.boardback.repository.BoardRepository;
 import com.leejihoon.boardback.repository.BoardViewRepository;
+import com.leejihoon.boardback.repository.CommentRepository;
+import com.leejihoon.boardback.repository.FavoriteRepository;
 import com.leejihoon.boardback.repository.UserRepository;
+import com.leejihoon.boardback.repository.resultSet.CommentListResultSet;
 import com.leejihoon.boardback.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +36,8 @@ public class BoardServiceImplement implements BoardService{
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
+    private final FavoriteRepository favoriteRepository;
     private final BoardViewRepository boardViewRepository;
     private final BoardImageRepository boardImageRepository;
 
@@ -78,6 +88,24 @@ public class BoardServiceImplement implements BoardService{
         }
         return GetBoardResponseDto.success(boardViewEntity, boardImageEntities);
     }
+    
+    @Override
+    public ResponseEntity<? super GetFavoriteListResponseDto> getFavoriteList(Integer boardNumber) {
+        
+        List<UserEntity> userEntities = new ArrayList<>();
+        
+        try {
+            boolean existedboard = boardRepository.existsByBoardNumber(boardNumber);
+            if (!existedboard) return GetFavoriteListResponseDto.notExistBoard();
+
+            userEntities = userRepository.findByBoardFavorite(boardNumber);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetFavoriteListResponseDto.success(userEntities);
+    }
 
     @Override
     public ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList() {
@@ -94,6 +122,53 @@ public class BoardServiceImplement implements BoardService{
         }
         return GetLatestBoardListResponseDto.success(boardViewEntities);
     }
+
+    @Override
+    public ResponseEntity<? super PutFavoriteResponseDto> putFavorite(Integer boardNumber, String email) {
+       
+        try {
+            
+            boolean existedboard = boardRepository.existsByBoardNumber(boardNumber);
+            if(!existedboard) return PutFavoriteResponseDto.notExistBoard();
+
+            boolean existedUser = userRepository.existsByEmail(email);
+            if(!existedUser) return PutFavoriteResponseDto.notExistUser();
+
+            boolean isFavorite = favoriteRepository.existsByUserEmailAndBoardNumber(email, boardNumber);
+            
+            FavoriteEntity favoriteEntity = new FavoriteEntity(email, boardNumber);
+            
+            if(isFavorite) favoriteRepository.delete(favoriteEntity);
+            else favoriteRepository.save(favoriteEntity);
+            
+
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return PutFavoriteResponseDto.success();
+    }
+
+    @Override
+    public ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNumber) {
+        
+        List<CommentListResultSet> resultSets = new ArrayList<>();
+        
+        try {
+
+            boolean existedboard = boardRepository.existsByBoardNumber(boardNumber);
+            if (!existedboard) return GetCommentListResponseDto.notExistBoard();
+
+            resultSets = commentRepository.findByCommentList(boardNumber);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetCommentListResponseDto.success(resultSets);
+    }
+
 
     
 }

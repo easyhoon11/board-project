@@ -11,6 +11,8 @@ import {
   GetLatestBoardListResponseDto,
   PostBoardResponseDto,
   GetBoardResponseDto,
+  GetFavoriteListResponseDto,
+  PutFavoriteResponseDto,
 } from "./dto/response/board";
 
 // description: Domain URL //
@@ -58,13 +60,24 @@ export const signInRequest = async (requestBody: SignInRequestDto) => {
     });
   return result;
 };
+
 // description: get board API end point //
 const GET_BOARD_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}`;
+
+// description: get favorite list API end point //
+const GET_FAVORITE_LIST_URL = (boardNumber: string | number) =>
+  `${API_DOMAIN}/board/${boardNumber}/favorite-list`;
+
 // description: get latest board list API end point //
 const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
+
 // description: post board API end point //
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
+
+// description: put favorite API end point //
+const PUT_FAVORITE_URL = (boardNumber: string | number) =>
+  `${API_DOMAIN}/board/${boardNumber}/favorite`;
 
 // description: get board request //
 export const getBoardRequest = async (boardNumber: string | number) => {
@@ -72,6 +85,21 @@ export const getBoardRequest = async (boardNumber: string | number) => {
     .get(GET_BOARD_URL(boardNumber))
     .then((response) => {
       const responseBody: GetBoardResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    });
+  return result;
+};
+
+// description: get favorite list request //
+export const getFavoriteListRequest = async (boardNumber: string | number) => {
+  const result = await axios
+    .get(GET_FAVORITE_LIST_URL(boardNumber))
+    .then((response) => {
+      const responseBody: GetFavoriteListResponseDto = response.data;
       return responseBody;
     })
     .catch((error) => {
@@ -111,6 +139,26 @@ export const postBoardRequest = async (
     .catch((error) => {
       const responseBody: ResponseDto = error.response.data;
       const { code } = responseBody;
+      return code;
+    });
+  return result;
+};
+
+// description: put favorite request //
+export const putFavoriteRequest = async (
+  boardNumber: string | number,
+  token: string
+) => {
+  const result = await axios
+    .put(PUT_FAVORITE_URL(boardNumber), {}, authorization(token))
+    .then((response) => {
+      const responseBody: PutFavoriteResponseDto = response.data;
+      const {code} = responseBody;
+      return code;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      const {code} = responseBody;
       return code;
     });
   return result;
