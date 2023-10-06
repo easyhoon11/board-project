@@ -6,13 +6,20 @@ import {
   GetSignInUserResponseDto,
   GetUserResponseDto,
 } from "./dto/response/user";
-import { PostBoardRequestDto } from "./dto/request/board";
+import {
+  PatchBoardRequestDto,
+  PostBoardRequestDto,
+  PostCommentRequestDto,
+} from "./dto/request/board";
 import {
   GetLatestBoardListResponseDto,
   PostBoardResponseDto,
   GetBoardResponseDto,
   GetFavoriteListResponseDto,
   PutFavoriteResponseDto,
+  GetCommentListResponseDto,
+  PostCommentResponseDto,
+  PatchBoardResponseDto,
 } from "./dto/response/board";
 
 // description: Domain URL //
@@ -69,15 +76,26 @@ const GET_BOARD_URL = (boardNumber: string | number) =>
 const GET_FAVORITE_LIST_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}/favorite-list`;
 
+// description: get comment list API end point //
+const GET_COMMENT_LIST_URL = (boardNumber: string | number) =>
+  `${API_DOMAIN}/board/${boardNumber}/comment-list`;
+
 // description: get latest board list API end point //
 const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
 
 // description: post board API end point //
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 
+// description: post comment API end point //
+const POST_COMMENT_URL = (boardNumber: string | number) =>
+  `${API_DOMAIN}/board/${boardNumber}/comment`;
+
 // description: put favorite API end point //
 const PUT_FAVORITE_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}/favorite`;
+
+// description: patch board API end point //
+const PATCH_BOARD_URL = (boardNumber: string | number) => `${API_DOMAIN}/board/${boardNumber}`;
 
 // description: get board request //
 export const getBoardRequest = async (boardNumber: string | number) => {
@@ -100,6 +118,20 @@ export const getFavoriteListRequest = async (boardNumber: string | number) => {
     .get(GET_FAVORITE_LIST_URL(boardNumber))
     .then((response) => {
       const responseBody: GetFavoriteListResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    });
+  return result;
+};
+// description: get comment list request //
+export const getCommentListRequest = async (boardNumber: string | number) => {
+  const result = await axios
+    .get(GET_COMMENT_LIST_URL(boardNumber))
+    .then((response) => {
+      const responseBody: GetCommentListResponseDto = response.data;
       return responseBody;
     })
     .catch((error) => {
@@ -143,6 +175,26 @@ export const postBoardRequest = async (
     });
   return result;
 };
+// description: post comment request //
+export const postCommentRequest = async (
+  requestBody: PostCommentRequestDto,
+  boardNumber: string,
+  token: string
+) => {
+  const result = await axios
+    .post(POST_COMMENT_URL(boardNumber), requestBody, authorization(token))
+    .then((response) => {
+      const responseBody: PostCommentResponseDto = response.data;
+      const { code } = responseBody;
+      return code;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      const { code } = responseBody;
+      return code;
+    });
+  return result;
+};
 
 // description: put favorite request //
 export const putFavoriteRequest = async (
@@ -153,16 +205,32 @@ export const putFavoriteRequest = async (
     .put(PUT_FAVORITE_URL(boardNumber), {}, authorization(token))
     .then((response) => {
       const responseBody: PutFavoriteResponseDto = response.data;
-      const {code} = responseBody;
+      const { code } = responseBody;
       return code;
     })
     .catch((error) => {
       const responseBody: ResponseDto = error.response.data;
-      const {code} = responseBody;
+      const { code } = responseBody;
       return code;
     });
   return result;
 };
+
+// description: patch board request //
+export const patchBoardRequest =async (requestBody:PatchBoardRequestDto, boardNumber: string | number, token: string) => {
+  const result =await axios.patch(PATCH_BOARD_URL(boardNumber),requestBody,authorization(token))
+  .then(response => {
+    const responseBody: PatchBoardResponseDto = response.data;
+    const {code} = responseBody
+    return code;
+  })
+  .catch(error => {
+    const responseBody:ResponseDto = error.response.data;
+    const {code} =responseBody;
+    return code;
+  })
+  return result;
+}
 
 // description: get sign in user API end point //
 const GET_SIGN_IN_USER_URL = () => `${API_DOMAIN}/user`;
