@@ -54,4 +54,20 @@ public class BoardEntity {
         this.title = dto.getTitle();
         this.contents = dto.getContent();
     }
+
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+
+    public void increaseViewCount(){
+        this.viewCount++;
+    }
+
+    public void increaseFavoriteCount(){
+        this.favoriteCount++;
+    }
+
+    public void decreaseFavoriteCount(){
+        this.favoriteCount--;
+    }
 }

@@ -4,6 +4,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.leejihoon.boardback.dto.request.auth.SignUpRequestDto;
+import com.leejihoon.boardback.dto.request.user.PatchNicknameRequestDto;
 
 import javax.persistence.Entity;
 
@@ -37,4 +38,7 @@ public class UserEntity {
         this. agreedPersonal = dto.getAgreedPersonal();
     }
 
+    public void patchNickname(PatchNicknameRequestDto dto) {
+        this.nickname = dto.getNickname();
+    }
 }

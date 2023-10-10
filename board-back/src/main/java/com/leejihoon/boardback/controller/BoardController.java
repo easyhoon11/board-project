@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.leejihoon.boardback.dto.request.board.PatchBoardRequestDto;
 import com.leejihoon.boardback.dto.request.board.PostBoardRequestDto;
 import com.leejihoon.boardback.dto.request.board.PostCommentRequestDto;
+import com.leejihoon.boardback.dto.response.board.DeleteBoardResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetBoardResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetCommentListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetFavoriteListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetLatestBoardListResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetUserBoardListResponseDto;
+import com.leejihoon.boardback.dto.response.board.IncreaseViewCountResponseDto;
 import com.leejihoon.boardback.dto.response.board.PatchBoardResponseDto;
 import com.leejihoon.boardback.dto.response.board.PostBoardResponseDto;
 import com.leejihoon.boardback.dto.response.board.PostCommentResponseDto;
@@ -55,6 +59,13 @@ public class BoardController {
         return response;
     }
 
+    @GetMapping("/user-board-list/{email}")
+    public ResponseEntity<? super GetUserBoardListResponseDto> getUserBoardList(
+            @PathVariable("email") String email) {
+        ResponseEntity<? super GetUserBoardListResponseDto> response = boardService.getUserBoardList(email);
+        return response;
+    }
+
     @GetMapping("/{boardNumber}/comment-list")
     public ResponseEntity<? super GetCommentListResponseDto> getCommentList(
             @PathVariable("boardNumber") Integer boardNumber) {
@@ -80,10 +91,19 @@ public class BoardController {
 
     @PatchMapping("/{boardNumber}")
     public ResponseEntity<? super PatchBoardResponseDto> patchBoard(
-        @RequestBody @Valid PatchBoardRequestDto requestDto, @PathVariable("boardNumber") Integer boardNumber, @AuthenticationPrincipal String email
-    ){
-        ResponseEntity<? super PatchBoardResponseDto> response = boardService.patchBoard(requestDto, boardNumber, email);
+            @RequestBody @Valid PatchBoardRequestDto requestDto, @PathVariable("boardNumber") Integer boardNumber,
+            @AuthenticationPrincipal String email) {
+        ResponseEntity<? super PatchBoardResponseDto> response = boardService.patchBoard(requestDto, boardNumber,
+                email);
         return response;
+    }
+
+    @PatchMapping("/increase-view-count/{boardNumber}")
+    public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(
+            @PathVariable("boardNumber") Integer boardNumber
+        ) {
+            ResponseEntity<? super IncreaseViewCountResponseDto> response = boardService.increaseViewCount(boardNumber);
+            return response;
     }
 
     @PostMapping("/{boardNumber}/comment")
@@ -93,6 +113,14 @@ public class BoardController {
             @AuthenticationPrincipal String email) {
         ResponseEntity<? super PostCommentResponseDto> response = boardService.postComment(requestBody, boardNumber,
                 email);
+        return response;
+    }
+
+    @DeleteMapping("/{boardNumber}")
+    public ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(
+            @PathVariable("boardNumber") Integer boardNumber,
+            @AuthenticationPrincipal String email) {
+        ResponseEntity<? super DeleteBoardResponseDto> response = boardService.deleteBoard(boardNumber, email);
         return response;
     }
 

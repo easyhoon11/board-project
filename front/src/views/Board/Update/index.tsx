@@ -38,7 +38,8 @@ export default function BoardUpdate() {
       return;
     }
 
-    const { title, content, boardImageList } = responseBody as GetBoardResponseDto;
+    const { title, content, boardImageList } =
+      responseBody as GetBoardResponseDto;
     setTitle(title);
     setContents(content);
     convertUrlsToFiles(boardImageList).then((files) => setImages(files));
@@ -94,8 +95,6 @@ export default function BoardUpdate() {
   useEffect(() => {
     if (!boardNumber) return;
     getBoardRequest(boardNumber).then(getBoardResponse);
-
-    
   }, [boardNumber]);
 
   //          render: 게시물 수정 화면 렌더링          //

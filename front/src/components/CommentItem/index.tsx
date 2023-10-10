@@ -4,24 +4,25 @@ import { CommentListItem } from "types";
 import DefaultProfileImage from 'assets/default-profile-image.png'
 import dayjs from "dayjs";
 
-//          interface: 댓글 리스트 아이템 컴포넌트 Props            //
+//          interface: 댓글 리스트 아이템 컴포넌트 Props         //
 interface Props {
-  commentListItem: CommentListItem;
+  commentItem: CommentListItem;
 }
 
 //          component: 댓글 리스트 아이템 컴포넌트          //
-export default function CommentItem({ commentListItem }: Props) {
-  //          state: Properties         //
-  const { content, writeDatetime, nickname, profileImage } = commentListItem;
+export default function CommentItem({ commentItem }: Props) {
 
-  //          function: 작성일 작성시간 함수          //
+  //          state: Properties          //
+  const { content, profileImage, writeDatetime, nickname } = commentItem;
+
+  //          function: 작성일 경과시간 함수          //
   const getElapsedTime = () => {
-    const now = dayjs().add(9, "hour");
+    const now = dayjs().add(9, 'hour');
     const writeTime = dayjs(writeDatetime);
 
-    const gap = now.diff(writeTime,'s');
-    if(gap < 60) return `${gap}초 전`;
-    if(gap < 3600) return `${Math.floor(gap/60)}분 전`;
+    const gap = now.diff(writeTime, 's');
+    if (gap < 60) return `${gap}초 전`;
+    if (gap < 3600) return `${Math.floor(gap/60)}분 전`;
     if (gap < 86400) return `${Math.floor(gap/3600)}시간 전`;
     return `${Math.floor(gap/86400)}일 전`;
   };

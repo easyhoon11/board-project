@@ -3,9 +3,11 @@ package com.leejihoon.boardback.service.implement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.leejihoon.boardback.dto.request.user.PatchNicknameRequestDto;
 import com.leejihoon.boardback.dto.response.ResponseDto;
 import com.leejihoon.boardback.dto.response.user.GetSignInUserResponseDto;
 import com.leejihoon.boardback.dto.response.user.GetUserResponseDto;
+import com.leejihoon.boardback.dto.response.user.PatchNicknameResponseDto;
 import com.leejihoon.boardback.entity.UserEntity;
 import com.leejihoon.boardback.repository.UserRepository;
 import com.leejihoon.boardback.service.UserService;
@@ -54,6 +56,28 @@ public class UserServiceImplement implements UserService {
 
         return GetUserResponseDto.success(userEntity);
 
+    }
+
+    @Override
+    public ResponseEntity<? super PatchNicknameResponseDto> patchNickname(PatchNicknameRequestDto dto, String email) {
+        try {
+
+            String nickname = dto.getNickname();
+            boolean existedNickname = userRepository.existsByNickname(nickname);
+            if (existedNickname) return PatchNicknameResponseDto.duplicateNickname();
+
+            UserEntity userEntity = userRepository.findByEmail(email);
+            if(userEntity == null) return PatchNicknameResponseDto.notExistUser();
+
+            userEntity.patchNickname(dto);
+            userRepository.save(userEntity);
+
+        } catch(Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PatchNicknameResponseDto.success();
     }
     
 }

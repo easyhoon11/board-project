@@ -7,11 +7,13 @@ import { useUserStore } from "stores";
 import { usePagination } from "hooks";
 import CommentItem from "components/CommentItem";
 import Pagination from "components/Pagination";
-import { BOARD_UPDATE_PATH, MAIN_PATH, USER_PATH } from "constant";
+import { AUTH_PATH, BOARD_UPDATE_PATH, MAIN_PATH, USER_PATH } from "constant";
 import {
+  deleteBoardRequest,
   getBoardRequest,
   getCommentListRequest,
   getFavoriteListRequest,
+  increaseViewCountRequest,
   postCommentRequest,
   putFavoriteRequest,
 } from "apis";
@@ -37,6 +39,12 @@ export default function BoardDetail() {
   //          function: 네비게이트 함수          //
   const navigator = useNavigate();
 
+  //          function: increase view count response 처리 함수         //
+  const increaseViewCountResponse = (code: string) => {
+    if (code === 'NB') alert('존재하지 않는 게시물입니다.');
+    if (code === 'DBE') alert('데이터베이스 오류입니다.');
+  };
+
   //          component: 게시물 상세보기 상단 컴포넌트          //
   const BoardDetailTop = () => {
     //          state: 작성자 상태          //
@@ -52,7 +60,7 @@ export default function BoardDetail() {
       const date = dayjs(writeDatetime);
       return date.format("YYYY. MM. DD.");
     };
-    
+
     //          function: get board response 처리 함수          //
     const getBoardResponse = (
       responseBody: GetBoardResponseDto | ResponseDto
@@ -73,6 +81,20 @@ export default function BoardDetail() {
       setWriter(isWriter);
     };
 
+    //          function: delete board response 처리 함수         //
+    const deleteBoardResponse = (code: string) => {
+      if (code === "VF") alert("잘못된 접근입니다.");
+      if (code === "NU" || code == "AF") {
+        navigator(AUTH_PATH);
+        return;
+      }
+      if (code === "NB") alert("존재하지 않는 게시물입니다.");
+      if (code === "NP") alert("권한이 없습니다.");
+      if (code === "DBE") alert("데이터베이스 오류입니다.");
+      if (code !== "SU") return;
+
+      navigator(MAIN_PATH);
+    };
     //          event handler: 작성자 클릭 이벤트 처리          //
     const onNicknameClickHandler = () => {
       if (!board) return;
@@ -90,8 +112,9 @@ export default function BoardDetail() {
     };
     //          event handler: 삭제 버튼 클릭 이벤트 처리          //
     const onDeleteButtonClickHandler = () => {
-      alert(`${boardNumber} 게시물 삭제!`);
-      navigator(MAIN_PATH);
+      const accessToken = cookies.accessToken;
+      if (!boardNumber || !accessToken) return;
+      deleteBoardRequest(boardNumber, accessToken).then(deleteBoardResponse);
     };
 
     //          effect: 게시물 번호 path variable이 바뀔때 마다 게시물 불러오기          //
@@ -190,21 +213,7 @@ export default function BoardDetail() {
     //          state: 댓글 상태          //
     const [comment, setComment] = useState<string>("");
 
-    //           function: post comment response 처리 함수          //
-    const postCommentResponse = (code: string) => {
-      if (code === "VF") alert("잘못된 접근입니다.");
-      if (code === "NB") alert("존재하지 않는 게시물입니다.");
-      if (code === "NU") alert("존재하지 않는 유저입니다.");
-      if (code === "AF") alert("인증에 실패했습니다.");
-      if (code === "DBE") alert("데이터베이스 오류입니다.");
-      if (code !== "SU") return;
-
-      setComment('');
-      if (!boardNumber) return;
-      getCommentListRequest(boardNumber).then(getCommentListResponse);
-    };
-
-    //          function: get favorite list response 처리 함수          //
+    //           function: get favorite list response 처리 함수          //
     const getFavoriteListResponse = (
       responseBody: GetFavoriteListResponseDto | ResponseDto
     ) => {
@@ -220,7 +229,6 @@ export default function BoardDetail() {
         favoriteList.findIndex((item) => item.email === user?.email) !== -1;
       setFavorite(isFavorite);
     };
-
     //           function: get comment list response 처리 함수          //
     const getCommentListResponse = (
       responseBody: GetCommentListResponseDto | ResponseDto
@@ -234,8 +242,7 @@ export default function BoardDetail() {
       setBoardList(commentList);
       setCommentsCount(commentList.length);
     };
-
-    //          function: put favorite response 처리 함수         //
+    //           function: put favorite response 처리 함수          //
     const putFavoriteResponse = (code: string) => {
       if (code === "VF") alert("잘못된 접근입니다.");
       if (code === "NU") alert("존재하지 않는 유저입니다.");
@@ -246,6 +253,19 @@ export default function BoardDetail() {
 
       if (!boardNumber) return;
       getFavoriteListRequest(boardNumber).then(getFavoriteListResponse);
+    };
+    //           function: post comment response 처리 함수          //
+    const postCommentResponse = (code: string) => {
+      if (code === "VF") alert("잘못된 접근입니다.");
+      if (code === "NB") alert("존재하지 않는 게시물입니다.");
+      if (code === "NU") alert("존재하지 않는 유저입니다.");
+      if (code === "AF") alert("인증에 실패했습니다.");
+      if (code === "DBE") alert("데이터베이스 오류입니다.");
+      if (code !== "SU") return;
+
+      setComment("");
+      if (!boardNumber) return;
+      getCommentListRequest(boardNumber).then(getCommentListResponse);
     };
 
     //           event handler: 좋아요 박스 보기 버튼 클릭 이벤트 처리          //
@@ -267,7 +287,6 @@ export default function BoardDetail() {
 
       putFavoriteRequest(boardNumber, accessToken).then(putFavoriteResponse);
     };
-
     //           event handler: 댓글 작성 버튼 클릭 이벤트 처리          //
     const onCommentButtonClickHandler = () => {
       const accessToken = cookies.accessToken;
@@ -306,7 +325,6 @@ export default function BoardDetail() {
         return;
       }
       getFavoriteListRequest(boardNumber).then(getFavoriteListResponse);
-
       getCommentListRequest(boardNumber).then(getCommentListResponse);
     }, [boardNumber]);
 
@@ -390,7 +408,7 @@ export default function BoardDetail() {
                 </div>
                 <div className="board-detail-bottom-comments-list-contents">
                   {viewBoardList.map((commentItem) => (
-                    <CommentItem commentListItem={commentItem} />
+                    <CommentItem commentItem={commentItem} />
                   ))}
                 </div>
               </div>
@@ -439,6 +457,19 @@ export default function BoardDetail() {
     );
   };
 
+  //          effect: 첫 렌더시 실행할 함수         //
+  let effectFlag = true;
+  useEffect(() => {
+
+    if (effectFlag) {
+      effectFlag = false;
+      return;
+    }
+    
+    if (!boardNumber) return;
+    increaseViewCountRequest(boardNumber).then(increaseViewCountResponse);
+
+  }, []);
   //          render: 게시물 상세보기 페이지 렌더링          //
   return (
     <div id="board-detail-wrapper">
