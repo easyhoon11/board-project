@@ -11,6 +11,7 @@ import { MAIN_PATH } from "constant";
 
 //          component: 게시물 수정 화면          //
 export default function BoardUpdate() {
+
   //          state: 이미지 인풋 ref 상태          //
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   //          state: 본문 텍스트 영역 ref 상태          //
@@ -23,78 +24,75 @@ export default function BoardUpdate() {
   const { images, setImages } = useBoardStore();
   //          state: 게시물 이미지 URL 상태          //
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  //          function: 네비게이트 함수           //
-  const navigator = useNavigate();
 
+  //          function: 네비게이트 함수          //
+  const navigator = useNavigate();
   //          function: get board response 처리 함수          //
-  const getBoardResponse = (
-    responseBody: GetBoardResponseDto | ResponseDto
-  ) => {
+  const getBoardResponse = (responseBody: GetBoardResponseDto | ResponseDto) => {
     const { code } = responseBody;
-    if (code === "NB") return alert("존재하지 않는 게시물입니다.");
-    if (code === "DBE") return alert("데이터베이스 오류 입니다.");
-    if (code !== "SU") {
+    if (code === 'NB') alert('존재하지 않는 게시물입니다.');
+    if (code === 'DBE') alert('데이터베이스 오류입니다.');
+    if (code !== 'SU') {
       navigator(MAIN_PATH);
       return;
     }
-
-    const { title, content, boardImageList } =
-      responseBody as GetBoardResponseDto;
+    
+    const { title, content, boardImageList } = responseBody as GetBoardResponseDto;
     setTitle(title);
     setContents(content);
-    convertUrlsToFiles(boardImageList).then((files) => setImages(files));
+    convertUrlsToFiles(boardImageList).then(files => setImages(files));
     setImageUrls(boardImageList);
-  };
+  }
 
   //          event handler: 제목 변경 이벤트 처리          //
   const onTitleChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const title = event.target.value;
     setTitle(title);
-  };
+  }
   //          event handler: 내용 변경 이벤트 처리          //
   const onContentsChangeHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const contents = event.target.value;
     setContents(contents);
     if (!contentsTextAreaRef.current) return;
-    contentsTextAreaRef.current.style.height = "auto";
+    contentsTextAreaRef.current.style.height = 'auto';
     contentsTextAreaRef.current.style.height = `${contentsTextAreaRef.current.scrollHeight}px`;
-  };
+  }
   //          event handler: 이미지 변경 이벤트 처리          //
   const onImageChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || !event.target.files.length) return;
     const file = event.target.files[0];
     const imageUrl = URL.createObjectURL(file);
-    const newImageUrls = imageUrls.map((url) => url);
+    const newImageUrls = imageUrls.map(url => url);
     newImageUrls.push(imageUrl);
-    const newImages = images.map((image) => image);
+    const newImages = images.map(image => image);
     newImages.push(file);
 
     setImageUrls(newImageUrls);
     setImages(newImages);
-  };
+  }
 
   //          event handler: 이미지 업로드 버튼 클릭 이벤트 처리          //
   const onImageUploadButtonClickHandler = () => {
     if (!imageInputRef.current) return;
     imageInputRef.current.click();
-  };
+  }
   //          event handler: 이미지 닫기 버튼 클릭 이벤트 처리          //
   const onImageCloseButtonClickHandler = (deleteIndex: number) => {
     if (!imageInputRef.current) return;
-    imageInputRef.current.value = "";
+    imageInputRef.current.value = '';
 
-    const newImageUrls = imageUrls.filter(
-      (url, index) => index !== deleteIndex
-    );
+    const newImageUrls = imageUrls.filter((url, index) => index !== deleteIndex);
     setImageUrls(newImageUrls);
     const newImages = images.filter((image, index) => index !== deleteIndex);
     setImages(newImages);
-  };
+  }
 
   //          effect: 게시물 번호 path variable이 변경될 때마다 실행될 함수          //
   useEffect(() => {
     if (!boardNumber) return;
     getBoardRequest(boardNumber).then(getBoardResponse);
+
+    
   }, [boardNumber]);
 
   //          render: 게시물 수정 화면 렌더링          //

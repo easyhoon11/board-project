@@ -1,5 +1,5 @@
-import ResponseDto from "..";
+import ResponseDto from '..';
 
-export default interface DeleteBoardResponseDto extends ResponseDto{
-    
+export default interface DeleteBoardResponseDto extends ResponseDto {
+
 }

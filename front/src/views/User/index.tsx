@@ -9,22 +9,31 @@ import BoardItem from "components/BoardItem";
 import Pagination from "components/Pagination";
 import { AUTH_PATH, BOARD_WRITE_PATH, MAIN_PATH, USER_PATH } from "constant";
 import {
+  fileUploadRequest,
+  getSignInUserRequest,
   getUserBoardListRequest,
   getUserRequest,
   patchNicknameRequest,
+  patchProfileImageRequest,
 } from "apis";
-import { GetUserResponseDto } from "apis/dto/response/user";
+import {
+  GetSignInUserResponseDto,
+  GetUserResponseDto,
+} from "apis/dto/response/user";
 import ResponseDto from "apis/dto/response";
 import { GetUserBoardListResponseDto } from "apis/dto/response/board";
 import { Cookies, useCookies } from "react-cookie";
-import { PatchNicknameRequestDto } from "apis/dto/request/user";
+import {
+  PatchNicknameRequestDto,
+  PatchProfileImageRequestDto,
+} from "apis/dto/request/user";
 
 //          component: 유저 페이지          //
 export default function User() {
   //          state: 조회하는 유저 이메일 path variable 상태           //
   const { searchEmail } = useParams();
   //          state: 로그인 유저 정보 상태           //
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
   //          state: 본인 여부 상태           //
   const [isMyPage, setMyPage] = useState<boolean>(false);
 
@@ -36,7 +45,7 @@ export default function User() {
     //          state: 프로필 이미지 input ref 상태           //
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     //          state: cookie 상태           //
-    const [cookies, setCookies] = useCookies();
+    const [cookies, setCookie] = useCookies();
     //          state: 이메일 상태           //
     const [email, setEmail] = useState<string>("");
     //          state: 프로필 이미지 상태           //
@@ -49,12 +58,12 @@ export default function User() {
     const [showChangeNickname, setShowChangeNickname] =
       useState<boolean>(false);
 
-    //          function: get user response 처리 함수         //
+    //          function: get user response 처리 함수          //
     const getUserResponse = (
       responseBody: GetUserResponseDto | ResponseDto
     ) => {
       const { code } = responseBody;
-      if (code === "NU") alert("존재하지 않는 유저 입니다.");
+      if (code === "NU") alert("존재하지 않는 유저입니다.");
       if (code === "DBE") alert("데이터베이스 오류입니다.");
       if (code !== "SU") {
         navigator(MAIN_PATH);
@@ -68,27 +77,70 @@ export default function User() {
       setExistingNickname(nickname);
       setProfileImage(profileImage);
     };
-
-    //          function: patch nickname response 처리 함수           //
+    //          function: patch nickname response 처리 함수          //
     const patchNicknameResponse = (code: string) => {
-      if (code === "AF" || code === 'NU') {
+      if (code === "AF" || code === "NU") {
         alert("로그인이 필요합니다.");
         navigator(AUTH_PATH);
         return;
       }
       if (code === "VF") alert("빈 값일 수 없습니다.");
-      if (code === "DN") alert("중복되는 닉네입입니다.")
+      if (code === "DN") alert("중복되는 닉네임입니다.");
       if (code === "DBE") alert("데이터베이스 오류입니다.");
       if (code !== "SU") {
         setNickname(existingNickname);
         return;
       }
-      
-      if(!searchEmail) return;
+
+      if (!searchEmail) return;
       getUserRequest(searchEmail).then(getUserResponse);
-      // TODO: 로그인 유저 정보 불러오기  //
-      
+
+      const accessToken = cookies.accessToken;
+      if (!accessToken) return;
+      getSignInUserRequest(accessToken).then(getSignInUserResponse);
+
       setShowChangeNickname(false);
+    };
+    //          function: file upload response 처리 함수          //
+    const fileUploadResponse = (url: string | null) => {
+      const accessToken = cookies.accessToken;
+      if (!accessToken) return;
+
+      const requestBody: PatchProfileImageRequestDto = {
+        profileImage: url,
+      };
+      patchProfileImageRequest(requestBody, accessToken).then(
+        patchProfileImageResponse
+      );
+    };
+    //          function: patch profile image response 처리 함수          //
+    const patchProfileImageResponse = (code: string) => {
+      if (code === "NU" || code === "AF") {
+        navigator(AUTH_PATH);
+        return;
+      }
+      if (code === "DBE") alert("데이터베이스 오류입니다.");
+      if (code !== "SU") return;
+
+      if (!searchEmail) return;
+      getUserRequest(searchEmail).then(getUserResponse);
+
+      const accessToken = cookies.accessToken;
+      if (!accessToken) return;
+      getSignInUserRequest(accessToken).then(getSignInUserResponse);
+    };
+    //          function: get sign in user response 처리 함수 //
+    const getSignInUserResponse = (
+      responseBody: GetSignInUserResponseDto | ResponseDto
+    ) => {
+      const { code } = responseBody;
+      if (code !== "SU") {
+        setCookie("accessToken", "", { expires: new Date(), path: MAIN_PATH });
+        setUser(null);
+        return;
+      }
+
+      setUser({ ...(responseBody as GetSignInUserResponseDto) });
     };
 
     //          event handler: 프로필 이미지 클릭 이벤트 처리          //
@@ -104,11 +156,19 @@ export default function User() {
         return;
       }
 
+      const isEqual = nickname === existingNickname;
+      if (isEqual) {
+        setShowChangeNickname(false);
+        return;
+      }
+
       const accessToken = cookies.accessToken;
       if (!accessToken) return;
 
       const requestBody: PatchNicknameRequestDto = { nickname };
-      patchNicknameRequest(requestBody, accessToken).then(patchNicknameResponse);
+      patchNicknameRequest(requestBody, accessToken).then(
+        patchNicknameResponse
+      );
     };
 
     //          event handler: 프로필 이미지 변경 이벤트 처리          //
@@ -116,8 +176,12 @@ export default function User() {
       event: ChangeEvent<HTMLInputElement>
     ) => {
       if (!event.target.files || !event.target.files.length) return;
-      const imageUrl = URL.createObjectURL(event.target.files[0]);
-      setProfileImage(imageUrl);
+
+      const file = event.target.files[0];
+      const data = new FormData();
+      data.append("file", file);
+
+      fileUploadRequest(data).then(fileUploadResponse);
     };
     //          event handler: 닉네임 변경 이벤트 처리          //
     const onNicknameChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {

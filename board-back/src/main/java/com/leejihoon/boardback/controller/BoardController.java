@@ -22,6 +22,8 @@ import com.leejihoon.boardback.dto.response.board.GetBoardResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetCommentListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetFavoriteListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetLatestBoardListResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetSearchBoardListResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetTop3BoardListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetUserBoardListResponseDto;
 import com.leejihoon.boardback.dto.response.board.IncreaseViewCountResponseDto;
 import com.leejihoon.boardback.dto.response.board.PatchBoardResponseDto;
@@ -66,6 +68,21 @@ public class BoardController {
         return response;
     }
 
+    @GetMapping("/top-3")
+    public ResponseEntity<? super GetTop3BoardListResponseDto> getTop3BoardList() {
+        ResponseEntity<? super GetTop3BoardListResponseDto> response = boardService.getTop3BoardList();
+        return response;
+    }
+
+    @GetMapping(value = { "/search-list/{searchWord}", "/search-list/{searchWord}/{preSearchWord}" })
+    public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(
+            @PathVariable("searchWord") String searchWord,
+            @PathVariable(value = "preSearchWord", required = false) String preSearchWord
+    ) {
+        ResponseEntity<? super GetSearchBoardListResponseDto> response = boardService.getSearchBoardList(searchWord, preSearchWord);
+        return response;
+    }
+
     @GetMapping("/{boardNumber}/comment-list")
     public ResponseEntity<? super GetCommentListResponseDto> getCommentList(
             @PathVariable("boardNumber") Integer boardNumber) {
@@ -100,10 +117,9 @@ public class BoardController {
 
     @PatchMapping("/increase-view-count/{boardNumber}")
     public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(
-            @PathVariable("boardNumber") Integer boardNumber
-        ) {
-            ResponseEntity<? super IncreaseViewCountResponseDto> response = boardService.increaseViewCount(boardNumber);
-            return response;
+            @PathVariable("boardNumber") Integer boardNumber) {
+        ResponseEntity<? super IncreaseViewCountResponseDto> response = boardService.increaseViewCount(boardNumber);
+        return response;
     }
 
     @PostMapping("/{boardNumber}/comment")

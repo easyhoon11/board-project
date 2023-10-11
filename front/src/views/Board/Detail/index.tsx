@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent, useRef } from "react";
 import "./style.css";
 import DefaultProfileImage from "assets/default-profile-image.png";
-import { Board, CommentListItem, FavoriteListItem } from "types";
+import { Board, BoardListItem, CommentListItem, FavoriteListItem } from "types";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUserStore } from "stores";
 import { usePagination } from "hooks";
@@ -34,16 +34,16 @@ export default function BoardDetail() {
   //          state: 로그인 유저 상태          //
   const { user } = useUserStore();
   //          state: cookie 상태          //
-  const [cookies, setCookies] = useCookies();
+  const [cookies, setCookie] = useCookies();
 
   //          function: 네비게이트 함수          //
   const navigator = useNavigate();
-
-  //          function: increase view count response 처리 함수         //
+  //          function: increase view count response 처리 함수          //
   const increaseViewCountResponse = (code: string) => {
-    if (code === 'NB') alert('존재하지 않는 게시물입니다.');
-    if (code === 'DBE') alert('데이터베이스 오류입니다.');
+    if (code === "NB") alert("존재하지 않는 게시물입니다.");
+    if (code === "DBE") alert("데이터베이스 오류입니다.");
   };
+
 
   //          component: 게시물 상세보기 상단 컴포넌트          //
   const BoardDetailTop = () => {
@@ -60,7 +60,6 @@ export default function BoardDetail() {
       const date = dayjs(writeDatetime);
       return date.format("YYYY. MM. DD.");
     };
-
     //          function: get board response 처리 함수          //
     const getBoardResponse = (
       responseBody: GetBoardResponseDto | ResponseDto
@@ -81,10 +80,10 @@ export default function BoardDetail() {
       setWriter(isWriter);
     };
 
-    //          function: delete board response 처리 함수         //
+    //          function: delete board response 처리 함수          //
     const deleteBoardResponse = (code: string) => {
       if (code === "VF") alert("잘못된 접근입니다.");
-      if (code === "NU" || code == "AF") {
+      if (code === "NU" || code === "AF") {
         navigator(AUTH_PATH);
         return;
       }
@@ -95,6 +94,7 @@ export default function BoardDetail() {
 
       navigator(MAIN_PATH);
     };
+
     //          event handler: 작성자 클릭 이벤트 처리          //
     const onNicknameClickHandler = () => {
       if (!board) return;
@@ -125,8 +125,7 @@ export default function BoardDetail() {
         return;
       }
       getBoardRequest(boardNumber).then(getBoardResponse);
-    }, [boardNumber]);
-
+    }, []);
     //          render: 게시물 상세보기 상단 컴포넌트 렌더링          //
     return (
       <div id="board-detail-top">
@@ -136,7 +135,7 @@ export default function BoardDetail() {
             <div className="board-detail-write-info-box">
               <div
                 className="board-detail-writer-profile-image"
-                style={{ backgroundImage: `url(${DefaultProfileImage})` }}
+                style={{ backgroundImage: `url(${board?.writerProfileImage ? board.writerProfileImage : DefaultProfileImage})` }}
               ></div>
               <div
                 className="board-detail-writer-nickname"
@@ -311,6 +310,7 @@ export default function BoardDetail() {
     ) => {
       const comment = event.target.value;
       setComment(comment);
+
       // description: textarea 내용이 바뀔때마다 높이 변경 //
       if (!textareaRef.current) return;
       textareaRef.current.style.height = "auto";
@@ -457,19 +457,18 @@ export default function BoardDetail() {
     );
   };
 
-  //          effect: 첫 렌더시 실행할 함수         //
+  //          effect: 첫 렌더시 실행할 함수          //
   let effectFlag = true;
   useEffect(() => {
-
     if (effectFlag) {
       effectFlag = false;
       return;
     }
-    
+
     if (!boardNumber) return;
     increaseViewCountRequest(boardNumber).then(increaseViewCountResponse);
-
   }, []);
+
   //          render: 게시물 상세보기 페이지 렌더링          //
   return (
     <div id="board-detail-wrapper">

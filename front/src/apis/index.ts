@@ -6,6 +6,7 @@ import {
   GetSignInUserResponseDto,
   GetUserResponseDto,
   PatchNicknameResponseDto,
+  PatchProfileImageResponseDto,
 } from "./dto/response/user";
 import {
   PatchBoardRequestDto,
@@ -13,22 +14,28 @@ import {
   PostCommentRequestDto,
 } from "./dto/request/board";
 import {
-  GetLatestBoardListResponseDto,
   PostBoardResponseDto,
+  GetLatestBoardListResponseDto,
   GetBoardResponseDto,
   GetFavoriteListResponseDto,
   PutFavoriteResponseDto,
   GetCommentListResponseDto,
   PostCommentResponseDto,
   PatchBoardResponseDto,
+  DeleteBoardResponseDto,
   GetUserBoardListResponseDto,
   IncreaseViewCountResponseDto,
+  GetTop3BoardListResponseDto,
+  GetSearchBoardListResponseDto,
 } from "./dto/response/board";
-import DeleteBoardResponseDto from "./dto/response/board/delete-board.response.dto";
-import { PatchNicknameRequestDto } from "./dto/request/user";
+import {
+  PatchNicknameRequestDto,
+  PatchProfileImageRequestDto,
+} from "./dto/request/user";
 
 // description: Domain URL //
 const DOMAIN = "http://localhost:4000";
+
 // description: API Domain 주소 //
 const API_DOMAIN = `${DOMAIN}/api/v1`;
 // description: Authorizaition Header //
@@ -76,41 +83,35 @@ export const signInRequest = async (requestBody: SignInRequestDto) => {
 // description: get board API end point //
 const GET_BOARD_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}`;
-
 // description: get favorite list API end point //
 const GET_FAVORITE_LIST_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}/favorite-list`;
-
 // description: get comment list API end point //
 const GET_COMMENT_LIST_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}/comment-list`;
-
 // description: get latest board list API end point //
 const GET_LATEST_BOARD_LIST_URL = () => `${API_DOMAIN}/board/latest-list`;
-
 // description: get user board list API end point //
 const GET_USER_BOARD_LIST_URL = (email: string) =>
   `${API_DOMAIN}/board/user-board-list/${email}`;
-
+// description: get top3 board list API end point //
+const GET_TOP3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
+// description: get search board list API end point //
+const GET_SEARCH_BOARD_LIST_URL = (searchWord: string, preSearchWord: string | undefined) => `${API_DOMAIN}/board/search-list/${searchWord}${preSearchWord ? '/' + preSearchWord : ''}`
 // description: post board API end point //
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
-
 // description: post comment API end point //
 const POST_COMMENT_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}/comment`;
-
 // description: put favorite API end point //
 const PUT_FAVORITE_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}/favorite`;
-
 // description: patch board API end point //
 const PATCH_BOARD_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}`;
-
 // description: increase view count API end point //
 const INCREASE_VIEW_COUNT_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/increase-view-count/${boardNumber}`;
-
 // description: delete board API end point //
 const DELETE_BOARD_URL = (boardNumber: string | number) =>
   `${API_DOMAIN}/board/${boardNumber}`;
@@ -144,6 +145,7 @@ export const getFavoriteListRequest = async (boardNumber: string | number) => {
     });
   return result;
 };
+
 // description: get comment list request //
 export const getCommentListRequest = async (boardNumber: string | number) => {
   const result = await axios
@@ -188,6 +190,35 @@ export const getUserBoardListRequest = async (email: string) => {
     });
   return result;
 };
+
+// description: get top3 board list request //
+export const getTop3BoardListRequest = async () => {
+  const result = await axios
+    .get(GET_TOP3_BOARD_LIST_URL())
+    .then((response) => {
+      const responseBody: GetTop3BoardListResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    });
+  return result;
+};
+
+// description: get search board list request //
+export const getSearchBoardListRequest =async (searchWord:string, preSearchWord: string | undefined) => {
+  const result = await axios.get(GET_SEARCH_BOARD_LIST_URL(searchWord,preSearchWord))
+    .then(response => {
+      const responseBody: GetSearchBoardListResponseDto = response.data;
+      return responseBody;
+    })
+    .catch(error => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    })
+  return result;
+}
 
 // description: post board request //
 export const postBoardRequest = async (
@@ -272,20 +303,23 @@ export const patchBoardRequest = async (
 };
 
 // description: increase view count request //
-export const increaseViewCountRequest = async (boardNumber: string | number) => {
-    const result = await axios.patch(INCREASE_VIEW_COUNT_URL(boardNumber))
-        .then(response => {
-            const responseBody: IncreaseViewCountResponseDto = response.data;
-            const { code } = responseBody;
-            return code;
-        })
-        .catch(error => {
-            const responseBody: ResponseDto = error.response.data;
-            const { code } = responseBody;
-            return code;
-        });
-    return result;
-}
+export const increaseViewCountRequest = async (
+  boardNumber: string | number
+) => {
+  const result = await axios
+    .patch(INCREASE_VIEW_COUNT_URL(boardNumber))
+    .then((response) => {
+      const responseBody: IncreaseViewCountResponseDto = response.data;
+      const { code } = responseBody;
+      return code;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      const { code } = responseBody;
+      return code;
+    });
+  return result;
+};
 
 // description: delete board request //
 export const deleteBoardRequest = async (
@@ -313,6 +347,8 @@ const GET_SIGN_IN_USER_URL = () => `${API_DOMAIN}/user`;
 const GET_USER_URL = (email: string) => `${API_DOMAIN}/user/${email}`;
 // description: patch nickname API end point //
 const PATCH_NICKNAME_URL = () => `${API_DOMAIN}/user/nickname`;
+// description: patch profile image API end point //
+const PATCH_PROFILE_IMAGE_URL = () => `${API_DOMAIN}/user/profile-image`;
 
 // description: get sign in user request //
 export const getSignInUserRequest = async (token: string) => {
@@ -346,22 +382,46 @@ export const getUserRequest = async (email: string) => {
 };
 
 // description: patch nickname request //
-export const patchNicknameRequest = async (requestBody: PatchNicknameRequestDto, token: string) =>{
-  const result = await axios.patch(PATCH_NICKNAME_URL(), requestBody, authorization(token))
-  .then(response =>{
-    const responseBody: PatchNicknameResponseDto = response.data;
-    const {code} = responseBody;
-    return code;
-  })
-  .catch(error => {
-    const responseBody: ResponseDto = error.response.data;
-    const {code} = responseBody;
-    return code;
-  })
-}
+export const patchNicknameRequest = async (
+  requestBody: PatchNicknameRequestDto,
+  token: string
+) => {
+  const result = await axios
+    .patch(PATCH_NICKNAME_URL(), requestBody, authorization(token))
+    .then((response) => {
+      const responseBody: PatchNicknameResponseDto = response.data;
+      const { code } = responseBody;
+      return code;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      const { code } = responseBody;
+      return code;
+    });
+  return result;
+};
 
+// description: patch profile image request //
+export const patchProfileImageRequest = async (
+  requestBody: PatchProfileImageRequestDto,
+  token: string
+) => {
+  const result = await axios
+    .patch(PATCH_PROFILE_IMAGE_URL(), requestBody, authorization(token))
+    .then((response) => {
+      const responseBody: PatchProfileImageResponseDto = response.data;
+      const { code } = responseBody;
+      return code;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      const { code } = responseBody;
+      return code;
+    });
+  return result;
+};
 
-// description: FILE Domain 주소 //
+// description: File Domain 주소 //
 const FILE_DOMAIN = `${DOMAIN}/file`;
 
 // description: file upload end point //

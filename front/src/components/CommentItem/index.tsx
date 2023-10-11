@@ -26,22 +26,21 @@ export default function CommentItem({ commentItem }: Props) {
     if (gap < 86400) return `${Math.floor(gap/3600)}시간 전`;
     return `${Math.floor(gap/86400)}일 전`;
   };
-  
 
   //          render: 댓글 리스트 아이템 컴포넌트 렌더링          //
   return (
-    <div className="comment-list-item-box">
-      <div className="comment-list-item-top">
-        <div className="comment-list-item-profile-box">
-          <div className="comment-list-item-profile-image" style={{backgroundImage: `url(${profileImage ? profileImage : DefaultProfileImage})`}}></div>
+    <div className='comment-list-item-box'>
+      <div className='comment-list-item-top'>
+        <div className='comment-list-item-profile-box'>
+          <div className='comment-list-item-profile-image' style={{ backgroundImage: `url(${profileImage ? profileImage : DefaultProfileImage})` }}></div>
         </div>
-        <div className="comment-list-item-nickname">{nickname}</div>
-        <div className="comment-list-item-divider">{'\|'}</div>
-        <div className="comment-list-item-time">{getElapsedTime()}</div>
+        <div className='comment-list-item-nickname'>{nickname}</div>
+        <div className='comment-list-item-divider'>{'\|'}</div>
+        <div className='comment-list-item-time'>{getElapsedTime()}</div>
       </div>
-      <div className="comment-list-item-main">
-        <div className="comment-list-item-contents">{content}</div>
+      <div className='comment-list-item-main'>
+        <div className='comment-list-item-contents'>{content}</div>
       </div>
     </div>
-  );
+  )
 }

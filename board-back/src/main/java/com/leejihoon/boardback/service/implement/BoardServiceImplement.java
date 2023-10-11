@@ -1,6 +1,10 @@
 package com.leejihoon.boardback.service.implement;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,8 @@ import com.leejihoon.boardback.dto.response.board.GetBoardResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetCommentListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetFavoriteListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetLatestBoardListResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetSearchBoardListResponseDto;
+import com.leejihoon.boardback.dto.response.board.GetTop3BoardListResponseDto;
 import com.leejihoon.boardback.dto.response.board.GetUserBoardListResponseDto;
 import com.leejihoon.boardback.dto.response.board.IncreaseViewCountResponseDto;
 import com.leejihoon.boardback.dto.response.board.PatchBoardResponseDto;
@@ -26,12 +32,14 @@ import com.leejihoon.boardback.entity.BoardImageEntity;
 import com.leejihoon.boardback.entity.BoardViewEntity;
 import com.leejihoon.boardback.entity.CommentEntity;
 import com.leejihoon.boardback.entity.FavoriteEntity;
+import com.leejihoon.boardback.entity.SearchLogEntity;
 import com.leejihoon.boardback.entity.UserEntity;
 import com.leejihoon.boardback.repository.BoardImageRepository;
 import com.leejihoon.boardback.repository.BoardRepository;
 import com.leejihoon.boardback.repository.BoardViewRepository;
 import com.leejihoon.boardback.repository.CommentRepository;
 import com.leejihoon.boardback.repository.FavoriteRepository;
+import com.leejihoon.boardback.repository.SearchLogRepository;
 import com.leejihoon.boardback.repository.UserRepository;
 import com.leejihoon.boardback.repository.resultSet.CommentListResultSet;
 import com.leejihoon.boardback.service.BoardService;
@@ -47,6 +55,7 @@ public class BoardServiceImplement implements BoardService {
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
     private final BoardViewRepository boardViewRepository;
+    private final SearchLogRepository searchLogRepository;
     private final BoardImageRepository boardImageRepository;
 
     @Override
@@ -154,6 +163,57 @@ public class BoardServiceImplement implements BoardService {
 
         return GetUserBoardListResponseDto.success(boardViewEntities);
 
+    }
+
+    @Override
+    public ResponseEntity<? super GetTop3BoardListResponseDto> getTop3BoardList() {
+
+        List<BoardViewEntity> boardViewEntities = new ArrayList<>();
+
+        try {
+
+            Date now = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sevenDaysAgo = simpleDateFormat.format(now);
+
+            boardViewEntities = boardViewRepository
+                    .findTop3ByWriteDatetimeGreaterThanOrderByFavoriteCountDesc(sevenDaysAgo);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetTop3BoardListResponseDto.success(boardViewEntities);
+
+    }
+
+    @Override
+    public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord,
+            String preSearchWord) {
+
+        List<BoardViewEntity> boardViewEntities = new ArrayList<>();
+
+        try {
+
+            boardViewEntities = boardViewRepository
+                    .findByTitleContainsOrContentContainsOrderByWriteDatetimeDesc(searchWord, searchWord);
+
+            boolean relation = preSearchWord != null;
+
+            SearchLogEntity searchLogEntity = new SearchLogEntity(searchWord, preSearchWord, relation);
+            searchLogRepository.save(searchLogEntity);
+
+            if (relation) {
+                searchLogEntity = new SearchLogEntity(preSearchWord, searchWord, relation);
+                searchLogRepository.save(searchLogEntity);
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return GetSearchBoardListResponseDto.success(boardViewEntities);
     }
 
     @Override
@@ -282,16 +342,17 @@ public class BoardServiceImplement implements BoardService {
     @Override
     public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber) {
         try {
-            
+
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if(boardEntity == null) return IncreaseViewCountResponseDto.notExistBoard();
+            if (boardEntity == null)
+                return IncreaseViewCountResponseDto.notExistBoard();
 
             boardEntity.increaseViewCount();
             boardRepository.save(boardEntity);
-            
+
         } catch (Exception exception) {
             exception.printStackTrace();
-            
+
             return ResponseDto.databaseError();
         }
         return IncreaseViewCountResponseDto.success();
@@ -323,6 +384,5 @@ public class BoardServiceImplement implements BoardService {
         }
         return DeleteBoardResponseDto.success();
     }
-
 
 }

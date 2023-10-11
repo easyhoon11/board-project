@@ -12,22 +12,18 @@ import com.leejihoon.boardback.entity.CommentEntity;
 import com.leejihoon.boardback.repository.resultSet.CommentListResultSet;
 
 @Repository
-public interface CommentRepository extends JpaRepository<CommentEntity, Integer>{
-    
-    @Query(
-        value=
-        "SELECT " +
+public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
+
+    @Query(value = "SELECT " +
             "U.nickname AS nickname, " +
             "U.profile_image_url AS profileImage, " +
             "C.contents AS content, " +
             "C.write_datetime AS writeDatetime " +
-        "FROM comment AS C " +
-        "INNER JOIN user AS U " +
-        "ON C.user_email = U.email " +
-        "WHERE C.board_number = 8 " +
-        "ORDER BY C.write_datetime ",
-        nativeQuery = true
-    )
+            "FROM comment AS C " +
+            "INNER JOIN user AS U " +
+            "ON C.user_email = U.email " +
+            "WHERE C.board_number = ?1 " +
+            "ORDER BY C.write_datetime ", nativeQuery = true)
     List<CommentListResultSet> findByCommentList(Integer boardNumber);
 
     @Transactional

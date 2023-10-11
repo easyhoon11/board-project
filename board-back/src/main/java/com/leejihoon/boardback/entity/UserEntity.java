@@ -5,6 +5,7 @@ import javax.persistence.Table;
 
 import com.leejihoon.boardback.dto.request.auth.SignUpRequestDto;
 import com.leejihoon.boardback.dto.request.user.PatchNicknameRequestDto;
+import com.leejihoon.boardback.dto.request.user.PatchProfileImageRequestDto;
 
 import javax.persistence.Entity;
 
@@ -40,5 +41,9 @@ public class UserEntity {
 
     public void patchNickname(PatchNicknameRequestDto dto) {
         this.nickname = dto.getNickname();
+    }
+
+    public void patchProfileImage(PatchProfileImageRequestDto dto) {
+        this.profileImageUrl = dto.getProfileImage();
     }
 }

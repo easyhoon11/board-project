@@ -8,42 +8,50 @@ import { SEARCH_PATH } from "constant";
 import BoardItem from "components/BoardItem";
 import Pagination from "components/Pagination";
 import { usePagination } from "hooks";
-import { getLatestBoardListRequest } from "apis";
-import { GetLatestBoardListResponseDto } from "apis/dto/response/board";
+import { getLatestBoardListRequest, getTop3BoardListRequest } from "apis";
+import { GetLatestBoardListResponseDto, GetTop3BoardListResponseDto } from "apis/dto/response/board";
 import ResponseDto from "apis/dto/response";
 
 //					component: 메인 페이지 					//
 export default function Main() {
-  //					component: 메인 상단 컴포넌트 					//
+
+  //          component: 메인 상단 컴포넌트          //
   const MainTop = () => {
-    //					state: 주간 Top3 게시물 리스트 상태					//
+
+    //          state: 주간 Top3 게시물 리스트 상태          //
     const [top3List, setTop3List] = useState<BoardListItem[]>([]);
 
-    //					effect: 컴포넌트가 마운트 시 top3 리스트 불러오기					//
+    //          function: get top 3 board list response 처리 함수          //
+    const getTop3BoardListResponse = (responseBody: GetTop3BoardListResponseDto | ResponseDto) => {
+      const { code } = responseBody;
+      if (code === 'DBE') alert('데이터베이스 오류입니다.');
+      if (code !== 'SU') return;
+
+      const { top3List } = responseBody as GetTop3BoardListResponseDto;
+      setTop3List(top3List);
+    }
+
+    //          effect: 컴포넌트 마운트 시 top3 리스트 불러오기          //
     useEffect(() => {
-      // TODO: API 호출로 변경
-      setTop3List(top3ListMock);
+      getTop3BoardListRequest().then(getTop3BoardListResponse);
     }, []);
 
-    //					render: 메인 상단 컴포넌트 렌더링					//
+
+    //          render: 메인 상단 컴포넌트 렌더링          //
     return (
-      <div id="main-top-wrapper">
-        <div className="main-top-container">
-          <div className="main-top-intro">
-            {"Hoons board에서\n다양한 이야기를 나눠보세요."}
-          </div>
-          <div className="main-top-contents-box">
-            <div className="main-top-contents-title">{"주간 TOP 3 게시글"}</div>
-            <div className="main-top-contents">
-              {top3List.map((boardItem) => (
-                <Top3ListItem boardItem={boardItem} />
-              ))}
+      <div id='main-top-wrapper'>
+        <div className='main-top-container'>
+          <div className='main-top-intro'>{'Hoon Board에서\n다양한 이야기를 나눠보세요'}</div>
+          <div className='main-top-contents-box'>
+            <div className='main-top-contents-title'>{'주간 TOP 3 게시글'}</div>
+            <div className='main-top-contents'>
+              {top3List.map(boardItem => <Top3ListItem boardItem={boardItem} />)}
             </div>
           </div>
         </div>
       </div>
     );
-  };
+  }
   //					component: 메인 하단 컴포넌트 					//
   const MainBottom = () => {
     //					state: 인기 검색어 리스트 상태					//
