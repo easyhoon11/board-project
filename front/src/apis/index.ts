@@ -32,6 +32,7 @@ import {
   PatchNicknameRequestDto,
   PatchProfileImageRequestDto,
 } from "./dto/request/user";
+import { GetPopularListResponseDto, GetRelationListResponseDto } from "./dto/response/search";
 
 // description: Domain URL //
 const DOMAIN = "http://localhost:4000";
@@ -97,7 +98,13 @@ const GET_USER_BOARD_LIST_URL = (email: string) =>
 // description: get top3 board list API end point //
 const GET_TOP3_BOARD_LIST_URL = () => `${API_DOMAIN}/board/top-3`;
 // description: get search board list API end point //
-const GET_SEARCH_BOARD_LIST_URL = (searchWord: string, preSearchWord: string | undefined) => `${API_DOMAIN}/board/search-list/${searchWord}${preSearchWord ? '/' + preSearchWord : ''}`
+const GET_SEARCH_BOARD_LIST_URL = (
+  searchWord: string,
+  preSearchWord: string | undefined
+) =>
+  `${API_DOMAIN}/board/search-list/${searchWord}${
+    preSearchWord ? "/" + preSearchWord : ""
+  }`;
 // description: post board API end point //
 const POST_BOARD_URL = () => `${API_DOMAIN}/board`;
 // description: post comment API end point //
@@ -207,18 +214,22 @@ export const getTop3BoardListRequest = async () => {
 };
 
 // description: get search board list request //
-export const getSearchBoardListRequest =async (searchWord:string, preSearchWord: string | undefined) => {
-  const result = await axios.get(GET_SEARCH_BOARD_LIST_URL(searchWord,preSearchWord))
-    .then(response => {
+export const getSearchBoardListRequest = async (
+  searchWord: string,
+  preSearchWord: string | undefined
+) => {
+  const result = await axios
+    .get(GET_SEARCH_BOARD_LIST_URL(searchWord, preSearchWord))
+    .then((response) => {
       const responseBody: GetSearchBoardListResponseDto = response.data;
       return responseBody;
     })
-    .catch(error => {
+    .catch((error) => {
       const responseBody: ResponseDto = error.response.data;
       return responseBody;
-    })
+    });
   return result;
-}
+};
 
 // description: post board request //
 export const postBoardRequest = async (
@@ -337,6 +348,42 @@ export const deleteBoardRequest = async (
       const responseBody: ResponseDto = error.response.data;
       const { code } = responseBody;
       return code;
+    });
+  return result;
+};
+
+// description: get popular word list API end point //
+const GET_POPULAR_WORD_LIST_URL = () => `${API_DOMAIN}/search/popular-list`;
+
+// description: get relation word list API end point //
+const GET_RELATION_WORD_LIST_URL = (searchWord: string) => `${API_DOMAIN}/search/${searchWord}/relation-list`;
+
+// description: get popular word list request //
+export const getPopularWordListRequest = async () => {
+  const result = await axios
+    .get(GET_POPULAR_WORD_LIST_URL())
+    .then((response) => {
+      const responseBody: GetPopularListResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
+    });
+  return result;
+};
+
+// description: get relation word list request //
+export const getRelationWordListRequest = async (searchWord: string) => {
+  const result = await axios
+    .get(GET_RELATION_WORD_LIST_URL(searchWord))
+    .then((response) => {
+      const responseBody: GetRelationListResponseDto = response.data;
+      return responseBody;
+    })
+    .catch((error) => {
+      const responseBody: ResponseDto = error.response.data;
+      return responseBody;
     });
   return result;
 };
